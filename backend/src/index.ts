@@ -14,7 +14,10 @@ const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors()); // Permitir CORS
+app.use(cors({
+  origin: process.env.FRONTEND_URL || process.env.CORS_ORIGIN || '*',
+  credentials: true
+})); // Permitir CORS
 app.use(express.json()); // Parsear JSON en el body
 app.use(express.urlencoded({ extended: true })); // Parsear URL encoded
 
