@@ -72,6 +72,8 @@ const queryValidation = [
  *   get:
  *     summary: Obtener todos los destinos con paginación y filtros
  *     tags: [Destinations]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: page
@@ -107,8 +109,10 @@ const queryValidation = [
  *               $ref: '#/components/schemas/DestinationListResponse'
  *       400:
  *         description: Error de validación en los parámetros de consulta
+ *       401:
+ *         description: No autenticado - Token requerido
  */
-router.get('/', queryValidation, getAllDestinations);
+router.get('/', authenticateToken, queryValidation, getAllDestinations);
 
 /**
  * @swagger
@@ -116,6 +120,8 @@ router.get('/', queryValidation, getAllDestinations);
  *   get:
  *     summary: Obtener un destino por ID
  *     tags: [Destinations]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -130,10 +136,12 @@ router.get('/', queryValidation, getAllDestinations);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Destination'
+ *       401:
+ *         description: No autenticado - Token requerido
  *       404:
  *         description: Destino no encontrado
  */
-router.get('/:id', getDestinationById);
+router.get('/:id', authenticateToken, getDestinationById);
 
 /**
  * @swagger
