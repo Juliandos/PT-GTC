@@ -4,11 +4,15 @@ import dotenv from 'dotenv';
 import User from '../models/user.js';
 import { AuthRequest } from '../middleware/auth.js';
 
-// Helper para validationResult (workaround para express-validator v7 con ES Modules)
-const getValidationResult = (req: Request) => {
-  // @ts-ignore - express-validator v7 tiene problemas de tipos con ES Modules
-  const { validationResult } = require('express-validator');
-  return validationResult(req);
+// Importación dinámica de validationResult para ES Modules
+let validationResultFn: any;
+const getValidationResult = async (req: Request) => {
+  if (!validationResultFn) {
+    const expressValidator = await import('express-validator');
+    // @ts-ignore - express-validator v7 tiene problemas de tipos con ES Modules
+    validationResultFn = expressValidator.validationResult;
+  }
+  return validationResultFn(req);
 };
 
 dotenv.config();
@@ -60,7 +64,7 @@ dotenv.config();
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     // Verificar errores de validación
-    const errors = getValidationResult(req);
+    const errors = await getValidationResult(req);
     if (!errors.isEmpty()) {
       res.status(400).json({
         error: 'Validation Error',
@@ -164,7 +168,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     // Verificar errores de validación
-    const errors = getValidationResult(req);
+    const errors = await getValidationResult(req);
     if (!errors.isEmpty()) {
       res.status(400).json({
         error: 'Validation Error',

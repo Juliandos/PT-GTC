@@ -131,6 +131,49 @@ const options: swaggerJsdoc.Options = {
             }
           }
         },
+        RegisterRequest: {
+          type: 'object',
+          required: ['email', 'password', 'name'],
+          properties: {
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'Email del usuario',
+              example: 'user@example.com'
+            },
+            password: {
+              type: 'string',
+              format: 'password',
+              description: 'Contraseña (mínimo 6 caracteres)',
+              example: 'password123',
+              minLength: 6
+            },
+            name: {
+              type: 'string',
+              description: 'Nombre del usuario',
+              example: 'Juan Pérez',
+              minLength: 2
+            }
+          }
+        },
+        LoginRequest: {
+          type: 'object',
+          required: ['email', 'password'],
+          properties: {
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'Email del usuario',
+              example: 'user@example.com'
+            },
+            password: {
+              type: 'string',
+              format: 'password',
+              description: 'Contraseña del usuario',
+              example: 'password123'
+            }
+          }
+        },
         AuthResponse: {
           type: 'object',
           properties: {
