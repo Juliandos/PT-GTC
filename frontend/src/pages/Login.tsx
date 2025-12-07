@@ -26,10 +26,17 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      await authService.login(formData);
+      const response = await authService.login(formData);
+      console.log('Login successful:', response);
       navigate('/destinations');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+      console.error('Login error:', err);
+      console.error('Error response:', err.response);
+      const errorMessage = err.response?.data?.message || 
+                          err.response?.data?.error || 
+                          err.message || 
+                          'Error al iniciar sesión';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

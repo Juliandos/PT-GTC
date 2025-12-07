@@ -4,12 +4,17 @@ import { LoginCredentials, RegisterData, AuthResponse, User } from '../types';
 export const authService = {
   // Login
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>('/api/auth/login', credentials);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    try {
+      const response = await api.post<AuthResponse>('/api/auth/login', credentials);
+      if (response.data && response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      return response.data;
+    } catch (error: any) {
+      console.error('Auth service login error:', error);
+      throw error;
     }
-    return response.data;
   },
 
   // Register

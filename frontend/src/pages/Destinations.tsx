@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { destinationService } from '../services/destinationService';
-import { Destination, DestinationFilters, DestinationType } from '../types';
+import { Destination, DestinationFilters, DestinationType, DestinationFormData } from '../types';
+import DestinationModal from '../components/DestinationModal';
 
 const Destinations: React.FC = () => {
   const navigate = useNavigate();
@@ -23,12 +24,10 @@ const Destinations: React.FC = () => {
     type: '' as DestinationType | '',
     countryCode: '',
   });
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
 
-  useEffect(() => {
-    loadDestinations();
-  }, [filters]);
-
-  const loadDestinations = async () => {
+  const loadDestinations = useCallback(async () => {
     try {
       setLoading(true);
       const data = await destinationService.getAll(filters);
@@ -39,7 +38,11 @@ const Destinations: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadDestinations();
+  }, [loadDestinations]);
 
   const handleSearch = () => {
     setFilters({
@@ -56,8 +59,9 @@ const Destinations: React.FC = () => {
   };
 
   const handleCreate = () => {
-    // TODO: Implementar modal de creación
-    console.log('Create destination');
+    setSelectedDestination(null);
+    setModalMode('create');
+    setIsModalOpen(true);
   };
 
   const handleModify = () => {
@@ -65,8 +69,18 @@ const Destinations: React.FC = () => {
       alert('Por favor selecciona un destino');
       return;
     }
-    // TODO: Implementar modal de modificación
-    console.log('Modify destination:', selectedDestination);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (data: DestinationFormData) => {
+    if (modalMode === 'create') {
+      await destinationService.create(data);
+    } else if (selectedDestination) {
+      await destinationService.update(selectedDestination.id, data);
+    }
+    await loadDestinations();
+    setSelectedDestination(null);
   };
 
   const handleRemove = async () => {
@@ -248,6 +262,18 @@ const Destinations: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Modal para Create/Edit */}
+      <DestinationModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedDestination(null);
+        }}
+        onSave={handleSave}
+        destination={selectedDestination}
+        mode={modalMode}
+      />
     </div>
   );
 };
