@@ -262,6 +262,12 @@ const options: swaggerJsdoc.Options = {
         name: 'Destinations',
         description: 'Endpoints para gestión de destinos'
       }
+    ],
+    // Seguridad global - se aplica a todos los endpoints que no especifiquen lo contrario
+    security: [
+      {
+        bearerAuth: []
+      }
     ]
   },
   apis: [
@@ -275,7 +281,13 @@ const swaggerSpec = swaggerJsdoc(options);
 export const setupSwagger = (app: Express): void => {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'HotelBediaX API Documentation'
+    customSiteTitle: 'HotelBediaX API Documentation',
+    swaggerOptions: {
+      persistAuthorization: true, // Mantener la autorización al recargar la página
+      displayRequestDuration: true, // Mostrar tiempo de respuesta
+      filter: true, // Habilitar filtro de búsqueda
+      tryItOutEnabled: true // Habilitar "Try it out" por defecto
+    }
   }));
 };
 

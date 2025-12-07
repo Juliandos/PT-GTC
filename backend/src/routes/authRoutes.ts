@@ -46,6 +46,7 @@ const loginValidation = [
  *   post:
  *     summary: Registrar un nuevo usuario
  *     tags: [Auth]
+ *     security: []  # No requiere autenticación
  *     requestBody:
  *       required: true
  *       content:
@@ -72,6 +73,7 @@ router.post('/register', registerValidation, register);
  *   post:
  *     summary: Iniciar sesión
  *     tags: [Auth]
+ *     security: []  # No requiere autenticación
  *     requestBody:
  *       required: true
  *       content:
