@@ -5,6 +5,7 @@ import { testConnection } from './config/database.js';
 import { setupSwagger } from './config/swagger.js';
 import './models/associations.js'; // Importar asociaciones de modelos
 import authRoutes from './routes/authRoutes.js';
+import destinationRoutes from './routes/destinationRoutes.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -40,7 +41,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // Rutas de la API
 app.use('/api/auth', authRoutes);
-// app.use('/api/destinations', destinationRoutes); // Se agregará después
+app.use('/api/destinations', destinationRoutes);
 
 // Middleware de manejo de errores
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

@@ -117,6 +117,70 @@ const options: swaggerJsdoc.Options = {
             }
           }
         },
+        DestinationRequest: {
+          type: 'object',
+          required: ['name', 'description', 'countryCode', 'type'],
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Nombre del destino',
+              example: 'Playa del Carmen',
+              minLength: 2,
+              maxLength: 100
+            },
+            description: {
+              type: 'string',
+              description: 'Descripción del destino',
+              example: 'Hermosa playa en la Riviera Maya con aguas cristalinas',
+              minLength: 10,
+              maxLength: 500
+            },
+            countryCode: {
+              type: 'string',
+              description: 'Código del país en formato ISO 3166-1 alpha-2 (2 letras mayúsculas)',
+              example: 'MX',
+              pattern: '^[A-Z]{2}$'
+            },
+            type: {
+              type: 'string',
+              enum: ['Beach', 'Mountain', 'City', 'Cultural', 'Adventure'],
+              description: 'Tipo de destino',
+              example: 'Beach'
+            }
+          }
+        },
+        DestinationListResponse: {
+          type: 'object',
+          properties: {
+            destinations: {
+              type: 'array',
+              items: {
+                $ref: '#/components/schemas/Destination'
+              }
+            },
+            pagination: {
+              type: 'object',
+              properties: {
+                page: {
+                  type: 'integer',
+                  example: 1
+                },
+                limit: {
+                  type: 'integer',
+                  example: 10
+                },
+                total: {
+                  type: 'integer',
+                  example: 25
+                },
+                totalPages: {
+                  type: 'integer',
+                  example: 3
+                }
+              }
+            }
+          }
+        },
         Error: {
           type: 'object',
           properties: {
