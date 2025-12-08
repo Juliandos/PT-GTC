@@ -1,4 +1,5 @@
 import { Router } from 'express';
+// @ts-ignore - express-validator v7 tiene problemas de tipos con ES Modules
 import { body } from 'express-validator';
 import { register, login, getMe } from '../controllers/authController.js';
 import { authenticateToken } from '../middleware/auth.js';
