@@ -6,6 +6,7 @@ import User from '../models/user.js';
 dotenv.config();
 
 // Extender el tipo Request para incluir user
+// Request ya incluye query, params, body, headers, así que solo necesitamos agregar user
 export interface AuthRequest extends Request {
   user?: {
     id: number;
