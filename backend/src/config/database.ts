@@ -5,23 +5,42 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Configuración de la base de datos
-const sequelize = new Sequelize(
-  process.env.DB_NAME || 'hotelbediax_db',
-  process.env.DB_USER || 'user_gtc',
-  process.env.DB_PASSWORD || 'user_password',
-  {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
-    dialect: 'postgres',
-    logging: process.env.NODE_ENV === 'development' ? console.log : false,
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000
-    }
-  }
-);
+// En producción, Render proporciona DATABASE_URL como una URL completa
+// En desarrollo, usamos las variables individuales
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, {
+      dialect: 'postgres',
+      logging: process.env.NODE_ENV === 'development' ? console.log : false,
+      dialectOptions: {
+        ssl: process.env.NODE_ENV === 'production' ? {
+          require: true,
+          rejectUnauthorized: false
+        } : false
+      },
+      pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+      }
+    })
+  : new Sequelize(
+      process.env.DB_NAME || 'hotelbediax_db',
+      process.env.DB_USER || 'user_gtc',
+      process.env.DB_PASSWORD || 'user_password',
+      {
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '5432'),
+        dialect: 'postgres',
+        logging: process.env.NODE_ENV === 'development' ? console.log : false,
+        pool: {
+          max: 5,
+          min: 0,
+          acquire: 30000,
+          idle: 10000
+        }
+      }
+    );
 
 // Función para probar la conexión
 export const testConnection = async (): Promise<void> => {
