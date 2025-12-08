@@ -19,7 +19,9 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: process.env.API_URL || `http://localhost:${process.env.PORT || 3000}`,
+        url: process.env.API_URL || (process.env.NODE_ENV === 'production' 
+          ? `https://hotelbediax-backend.onrender.com`
+          : `http://localhost:${process.env.PORT || 3000}`),
         description: process.env.NODE_ENV === 'production' 
           ? 'Servidor de producción' 
           : 'Servidor de desarrollo'
