@@ -14,13 +14,35 @@ const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+// Configuración de CORS
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:3002',
-    'http://localhost:3003',
-  ],
+  origin: (origin, callback) => {
+    // Permitir solicitudes sin origen (como de Postman o curl)
+    if (!origin) return callback(null, true);
+    
+    // En producción, permitir dominios de Vercel y el FRONTEND_URL configurado
+    if (process.env.NODE_ENV === 'production') {
+      // Permitir cualquier subdominio de Vercel
+      if (/^https:\/\/.*\.vercel\.app$/.test(origin)) {
+        return callback(null, true);
+      }
+      
+      // Permitir el FRONTEND_URL específico si está configurado
+      if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
+        return callback(null, true);
+      }
+      
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    
+    // En desarrollo, permitir cualquier origen localhost
+    if (origin.includes('localhost')) {
+      return callback(null, true);
+    }
+    
+    return callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
